@@ -10,10 +10,6 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-
-import javax.swing.*;
-import java.awt.*;
 
 public class Main {
     private int vertex;

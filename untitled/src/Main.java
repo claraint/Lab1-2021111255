@@ -312,7 +312,7 @@ public class Main {
         }
 
         if (distance[end] == Integer.MAX_VALUE) {
-            System.out.println("输入的单词不可达！");
+            System.out.println("输入单词不可达！");
             return;
         }
 

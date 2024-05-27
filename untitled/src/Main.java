@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultDirectedGraph;
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
@@ -35,31 +32,7 @@ public class Main {
     public static void main(String[] args) {
 
         String filePath = "input.txt";
-//        String finalText = new String();
-//        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-//            String line;
-//            StringBuilder processedText = new StringBuilder();
-//
-//            // 正则表达式，匹配任何非字母字符，包括标点符号、换行符等
-//            Pattern nonLetterPattern = Pattern.compile("[^a-zA-Z]+");
-//
-//            while ((line = reader.readLine()) != null) {
-//                Matcher matcher = nonLetterPattern.matcher(line);
-//
-//                // 使用空格替换非字母字符
-//                String processedLine = matcher.replaceAll(" ");
-//
-//                // 移除多余空格
-//                processedLine = processedLine.replaceAll("\\s+", " ");
-//                processedText.append(processedLine).append(" ");
-//            }
-//
-//            // 移除尾部多余的空格
-//            finalText = processedText.toString().trim();
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+
 
         String finalText = readAndProcessText(filePath);
 
@@ -166,46 +139,6 @@ public class Main {
 
         adj[index1].addNode(word2, index2);
     }
-
-
-
-
-
-//public void showDirectedGraph()
-//{
-//    System.out.println("展示有向图：\n");
-//    System.out.println("vertex:\n");
-//    System.out.println("{");
-//    for(int i = 0; i<vertex; i++){
-//        if(i != vertex - 1){
-//            System.out.println(adj[i].getHead().word + ",");
-//        }
-//        else{
-//            System.out.println(adj[i].getHead().word);
-//        }
-//    }
-//    System.out.println("}\n");
-//    System.out.println("edge:\n");
-//    System.out.println("{\n");
-//    for(int i = 0; i<vertex; i++){
-//        if(i != vertex - 1){
-//            for(Node node =adj[i].getHead().next;node!=null;node=node.next){
-//                System.out.println("\t" + adj[i].getHead().word + "->" + node.word + ",\n");
-//            }
-//        }
-//        else{
-//            for(Node node =adj[i].getHead().next;node!=null;node=node.next){
-//                if(node.next!=null) {
-//                    System.out.println("\t" + adj[i].getHead().word + "->" + node.word + ",\n");
-//                }
-//                else {
-//                    System.out.println("\t" + adj[i].getHead().word + "->" + node.word + "\n");
-//                }
-//            }
-//        }
-//    }
-//    System.out.println("}\n");
-//}
 
     // 可视化有向图
     public void showDirectedGraph() {
@@ -515,7 +448,7 @@ public class Main {
 }
 
 
-    class Node {
+class Node {
     public String word;
     public int weight;
     public Node next;
@@ -571,7 +504,7 @@ class LinkedList {
         return head;
     }
 
-    public Node getTail() {
-        return tail;
-    }
+//    public Node getTail() {
+//        return tail;
+//    }
 }

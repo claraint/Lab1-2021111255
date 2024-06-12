@@ -1,39 +1,65 @@
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
-import org.jgrapht.graph.DefaultWeightedEdge;
 
-import javax.swing.*;
-import java.awt.*;
-
+/**
+ * Main class to demonstrate the graph functionalities.
+ */
 public class Main {
+    private static final int MAX = 32767;
     private int vertex;
-    private LinkedList[] adj;
-    private Map<String, Integer> wordIndexMap;
+    LinkedList[] adj;
+    Map<String, Integer> wordIndexMap;
 
-    public static final int MAX = 32767;
-
+    /**
+     * Constructs a Main object with initialized adjacency list and word index map.
+     */
     public Main() {
         adj = new LinkedList[MAX];
         wordIndexMap = new HashMap<>();
         vertex = 0;
     }
 
+    /**
+     * The main method to execute the program.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
-
         String filePath = "input.txt";
-
-
         String finalText = readAndProcessText(filePath);
 
         // 单词数组
@@ -47,7 +73,6 @@ public class Main {
 
         // 展示有向图
         main.showDirectedGraph();
-
 
         Scanner scanner = new Scanner(System.in);
 
@@ -66,17 +91,22 @@ public class Main {
         System.out.println("生成的新文本：");
         System.out.println(main.generateNewText(newText));
 
-
         // 功能5：计算两个单词之间的最短路径
         System.out.println("请输入两个单词，计算它们之间的最短路径：");
         String startWord = scanner.next();
         String endWord = scanner.next();
         main.calcShortestPath(startWord, endWord);
 
-       // 功能6：随机游走
+        // 功能6：随机游走
         main.randomWalk();
     }
 
+    /**
+     * Reads and processes text from the specified file.
+     *
+     * @param filePath the path to the input file
+     * @return the processed text
+     */
     public static String readAndProcessText(String filePath) {
         StringBuilder processedText = new StringBuilder();
 
@@ -111,7 +141,12 @@ public class Main {
         }
     }
 
-    // 将单词数组转换为有向图
+    /**
+     * Adds an edge between two words in the graph.
+     *
+     * @param word1 the first word
+     * @param word2 the second word
+     */
     public void addEdge(String word1, String word2) {
         int index1 = wordIndexMap.getOrDefault(word1, -1);
         int index2 = wordIndexMap.getOrDefault(word2, -1);
@@ -126,8 +161,7 @@ public class Main {
         if (index2 == -1) {
             adj[vertex] = new LinkedList(word2);
             wordIndexMap.put(word2, vertex);
-            index2 = vertex;
-            vertex++;
+            index2 = vertex++;
         }
 
         for (Node node = adj[index1].getHead().next; node != null; node = node.next) {
@@ -140,7 +174,9 @@ public class Main {
         adj[index1].addNode(word2, index2);
     }
 
-    // 可视化有向图
+    /**
+     * Visualizes the directed graph.
+     */
     public void showDirectedGraph() {
         // 创建带权重的有向图
         DefaultDirectedWeightedGraph<String, DefaultWeightedEdge> graph = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
@@ -200,7 +236,13 @@ public class Main {
         layout.execute(mxGraph.getDefaultParent());
     }
 
-    // 查询桥接词
+    /**
+     * Queries bridge words between two words.
+     *
+     * @param word1 the first word
+     * @param word2 the second word
+     * @return the bridge words between word1 and word2
+     */
     public String queryBridgeWords(String word1, String word2) {
         int index1 = wordIndexMap.getOrDefault(word1, -1);
         int index2 = wordIndexMap.getOrDefault(word2, -1);
@@ -217,7 +259,6 @@ public class Main {
             while (node4 != null) {
                 if (node4.word.equals(word2)) {
                     words.append(node3.word).append(",");
-                    break;
                 }
                 node4 = node4.next;
             }
@@ -230,7 +271,12 @@ public class Main {
         }
     }
 
-    // 功能4：根据bridge word生成新文本
+    /**
+     * Generates new text based on bridge words.
+     *
+     * @param inputText the input text
+     * @return the generated text
+     */
     public String generateNewText(String inputText) {
         String[] newWords = inputText.split(" ");
         StringBuilder resultText = new StringBuilder();
@@ -264,8 +310,13 @@ public class Main {
         return resultText.toString();
     }
 
-    // Dijkstra算法求最短路径
-    public void  calcShortestPath(String word1, String word2) {
+    /**
+     * Calculates the shortest path between two words using Dijkstra's algorithm.
+     *
+     * @param word1 the start word
+     * @param word2 the end word
+     */
+    public void calcShortestPath(String word1, String word2) {
         int start = wordIndexMap.getOrDefault(word1, -1);
         int end = wordIndexMap.getOrDefault(word2, -1);
 
@@ -337,7 +388,9 @@ public class Main {
         markShortestPath(shortestPath);
     }
 
-// 随机游走
+    /**
+     * Performs a random walk on the graph.
+     */
     public void randomWalk() {
         Random random = new Random();
         int start = random.nextInt(vertex); // 随机选择起始节点
@@ -381,7 +434,14 @@ public class Main {
             e.printStackTrace();
         }
     }
-    // 从当前节点选择下一个节点
+
+    /**
+     * Selects the next node to visit in a random walk.
+     *
+     * @param current       the current node index
+     * @param visitedEdges the visited edges matrix
+     * @return the next node to visit
+     */
     private Node selectNextNode(int current, boolean[][] visitedEdges) {
         List<Node> availableNodes = new ArrayList<>();
         for (Node node = adj[current].getHead().next; node != null; node = node.next) {
@@ -396,6 +456,12 @@ public class Main {
         return availableNodes.get(random.nextInt(availableNodes.size()));
     }
 
+    /**
+     * Marks the shortest path on the graph.
+     *
+     * @param shortestPath the list of nodes in the shortest path
+     */
+    @SuppressWarnings("checkstyle:LineLength")
     private void markShortestPath(List<String> shortestPath) {
         // 使用 mxGraph 将 JGraphT 图转换为 JGraphX 图
         mxGraph mxGraph = new mxGraph();
@@ -432,9 +498,6 @@ public class Main {
         }
 
         // 创建一个 Swing 窗口来展示图形
-
-
-
         JFrame frame = new JFrame();
         frame.getContentPane().add(new mxGraphComponent(mxGraph));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -446,8 +509,9 @@ public class Main {
         layout.execute(mxGraph.getDefaultParent());
     }
 }
-
-
+/**
+ * Represents a node in a linked list.
+ */
 class Node {
     public String word;
     public int weight;
@@ -468,7 +532,9 @@ class Node {
         num = n;
     }
 }
-
+/**
+ * Represents a linked list.
+ */
 class LinkedList {
     private Node head = null;
     private Node tail = null;
@@ -504,7 +570,8 @@ class LinkedList {
         return head;
     }
 
-//    public Node getTail() {
-//        return tail;
-//    }
+    public Node getTail() {
+        return tail;
+    }
 }
+
